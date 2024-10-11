@@ -53,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the signing was successful
         if ($output) {
             // Upload to GitHub
-            $token = 'YOUR_GITHUB_TOKEN'; // Replace with your token
-            $repo = 'YOUR_USERNAME/YOUR_REPOSITORY'; // Replace with your repo
+            $token = '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'; // Replace with your token
+            $repo = 'Veloraios/ipa-signer'; // Replace with your repo
             $uploadResponse = uploadToGitHub($outputPath, $repo, $token);
 
             if (isset($uploadResponse->id)) {

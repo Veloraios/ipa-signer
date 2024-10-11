@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPA Signer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>IPA Signer</h1>
+    <form id="signerForm" enctype="multipart/form-data">
+        <input type="file" name="ipaFile" accept=".ipa" required>
+        <input type="file" name="p12File" accept=".p12" required>
+        <input type="password" name="p12Password" placeholder="P12 Password" required>
+        <input type="text" name="provisioningProfile" placeholder="Provisioning Profile URL" required>
+        <button type="submit">Sign IPA</button>
+    </form>
+    <div id="output"></div>
+    <script src="script.js"></script>
+</body>
+</html>

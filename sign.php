@@ -1,3 +1,4 @@
+
 <?php
 function uploadToGitHub($filePath, $repo, $token) {
     $url = "https://uploads.github.com/repos/$repo/releases/latest/assets?name=" . basename($filePath);
@@ -20,7 +21,8 @@ function uploadToGitHub($filePath, $repo, $token) {
 function cleanupUploads() {
     $files = glob('uploads/*'); // Get all file names
     foreach ($files as $file) {
-        if (is_file($file)) {
+        // Check if the file was last modified more than an hour ago
+        if (is_file($file) && (time() - filemtime($file) > 3600)) {
             unlink($file); // Delete the file
         }
     }
@@ -32,11 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $p12Password = $_POST['p12Password'];
     $provisioningProfile = $_POST['provisioningProfile'];
 
+    // Generate unique names for uploaded files
+    $timestamp = time();
+    $ipaFileName = "uploads/app_$timestamp.ipa";
+    $p12FileName = "uploads/certificate_$timestamp.p12";
+    $outputPath = "uploads/signed_app_$timestamp.ipa";
+
     // Ensure the IPA file is uploaded
-    if (move_uploaded_file($ipaFile, 'uploads/app.ipa') && move_uploaded_file($p12File, 'uploads/certificate.p12')) {
-        $ipaPath = 'uploads/app.ipa';
-        $p12Path = 'uploads/certificate.p12';
-        $outputPath = 'uploads/signed_app.ipa';
+    if (move_uploaded_file($ipaFile, $ipaFileName) && move_uploaded_file($p12File, $p12FileName)) {
+        $ipaPath = $ipaFileName;
+        $p12Path = $p12FileName;
 
         // Import the .p12 file into the keychain
         $importCommand = "security import $p12Path -P $p12Password -T /usr/bin/codesign";
@@ -53,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the signing was successful
         if ($output) {
             // Upload to GitHub
-            $token = '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'; // Replace with your token
-            $repo = 'Veloraios/ipa-signer'; // Replace with your repo
+            $token = 'your_github_token'; // Replace with your token
+            $repo = 'yourusername/repo'; // Replace with your repo
             $uploadResponse = uploadToGitHub($outputPath, $repo, $token);
 
             if (isset($uploadResponse->id)) {
